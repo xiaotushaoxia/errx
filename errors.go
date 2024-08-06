@@ -19,6 +19,16 @@ var (
 	Unwrap = errors.Unwrap
 )
 
+func WithStack(err error, msg string) error {
+	if err == nil {
+		return nil
+	}
+	if _, found := firstStackError(err); found {
+		return err
+	}
+	return errors.WithStack(err, msg)
+}
+
 func Wrap(err error, msg string) error {
 	if err == nil {
 		return nil
