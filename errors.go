@@ -47,20 +47,30 @@ func Format(err error) string {
 	if err == nil {
 		return fmt.Sprint(err)
 	}
-	var ss []string
-	ss = append(ss, "Error: "+err.Error())
-
-	st, found := firstStackError(err)
-	if !found {
-		ss = append(ss, "Stack: empty")
-	} else {
-		for i, f := range st.StackTrace() {
-			if i == 0 { // skip stack of Wrap
-				ss = append(ss, "Stack:")
-				continue
-			}
-			ss = append(ss, fmt.Sprintf("%+s:%d", f, f))
+	var ss = []string{"Error: "+err.Error()}
+	stacks := GetStack(err)
+	if len(stacks) > 0 {
+		ss = append(ss, "Stacks:")
+		for _, s := range stacks {
+			ss = append(ss, fmt.Sprintf("%+s:%d", s, s))
 		}
+	} else {
+		ss = append(ss, "Stack: empty")
 	}
 	return strings.Join(ss, "\n")
+}
+
+func GetStack(err error) errors.StackTrace {
+	if err == nil {
+		return nil
+	}
+	st, found := firstStackError(err)
+	if !found {
+		return nil
+	}
+	var result errors.StackTrace
+	for _, f := range st.StackTrace() {
+		result = append(result, f)
+	}
+	return result
 }
