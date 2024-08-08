@@ -26,7 +26,7 @@ func WithStack(err error, msg string) error {
 	if _, found := firstStackError(err); found {
 		return err
 	}
-	return errors.WithStack(err, msg)
+	return errors.WithStack(err)
 }
 
 func Wrap(err error, msg string) error {
