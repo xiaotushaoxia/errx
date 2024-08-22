@@ -19,7 +19,7 @@ var (
 	Unwrap = errors.Unwrap
 )
 
-func WithStack(err error, msg string) error {
+func WithStack(err error) error {
 	if err == nil {
 		return nil
 	}
